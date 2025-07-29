@@ -1,0 +1,68 @@
+
+
+const fieldMapping = {
+  username: 'input[name="user"]',
+  password: '#pass'
+};
+
+
+import { Page } from '@playwright/test';
+
+export class RegistrationPage {
+  constructor(private page: Page) {}
+
+  private fieldMapping: Record<string, string[]> = {
+    username: ['input[name="user"]', 'input.user'],
+    password: ['#pass']
+    // Add more fields as needed
+  };
+
+  // Smart fillForm function with fallback selector logic
+  async fillForm(data: Record<string, string>) {
+    for (const [key, value] of Object.entries(data)) {
+      const selectors = this.fieldMapping[key];
+      if (!selectors) {
+        console.warn(`No selectors defined for key: ${key}`);
+        continue;
+      }
+
+      let matched = false;
+      for (const selector of selectors) {
+        const locator = this.page.locator(selector);
+        if (await locator.count()) {
+          await locator.fill(value);
+          matched = true;
+          break;
+        }
+      }
+
+      if (!matched) {
+        throw new Error(`No valid selector found for field: ${key}`);
+      }
+    }
+  }
+
+  async submit() {
+    await this.page.click('button[type="submit"]');
+  }
+
+  async navigate() {
+    await this.page.goto('https://example.com/register');
+  }
+}
+
+
+///// Handling Different kind of locators on the same page
+
+//   for (const [name, value] of Object.entries(credentials)) {
+//   if (name === 'ID') continue;
+
+//   const inputByName = page.locator(`form[action="/signup"] input[name="${name}"]`);
+//   const inputById = page.locator(`form[action="/signup"] input[id="${name}"]`);
+
+//   if (await inputByName.count() > 0) {
+//     await inputByName.fill(value);
+//   } else if (await inputById.count() > 0) {
+//     await inputById.fill(value);
+//   }
+// }
