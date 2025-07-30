@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { randomString } from '../../utils/data';
+
 export default class SignupPage {
   private page: Page;
 

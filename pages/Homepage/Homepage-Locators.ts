@@ -12,6 +12,11 @@ export const HomePageLocators = {
 
 };
 
+export const baseValue = {
+
+    AccountDeletedMessage: 'Account Deleted!',
+}
+
 // export const SignUpLocators = {
 
 //     email: 'email',
