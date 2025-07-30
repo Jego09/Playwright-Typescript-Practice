@@ -41,13 +41,4 @@ export class AccountInformationPage {
   async AccountCreatedValidation(): Promise<void> {
     await expect(this.page.getByText('Account Created!')).toBeVisible();
   }
-
-  async getLoggedInName(): Promise<string | null> {
-    const loggedInName = await this.page.locator('text=Logged in as').locator('b').textContent();
-    return loggedInName;
-  }
-  async expectLoggedInName(expectedName: string): Promise<void> {
-    const loggedInName = await this.getLoggedInName();
-    expect(loggedInName).toBe(expectedName);
-  }
 }

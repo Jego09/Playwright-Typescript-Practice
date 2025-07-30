@@ -63,9 +63,9 @@ test('TC_1 Register User', async ({ page }) => {
 
     await continueButton.click();
 
-  await accountInformationPage.getLoggedInName();
+  await homePage.getLoggedInName();
 
-    await accountInformationPage.expectLoggedInName(filledValues[baseValue.name]); 
+    await homePage.expectLoggedInName(filledValues[baseValue.name]); 
 
   await homePage.deleteAccountAndValidate();
   
@@ -73,7 +73,31 @@ test('TC_1 Register User', async ({ page }) => {
 
 });
 
-test('TC_2 Login', async ({ page }) => {
+test('TC_2 Login user with correct credentials', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+
+    await homePage.goto();
+
+        await homePage.clickLoginButton();
+
+  const loginPage = new LoginPage(page);
+
+    await loginPage.expectLoginToYourAccount();
+
+      await loginPage.enterCredentials();
+
+  await homePage.getLoggedInName();
+
+    await homePage.expectLoggedInName(process.env.NAME!);
+
+  await homePage.deleteAccountAndValidate();
+
+    await page.getByText(baseValue.continue).click();
+
+});
+
+test('TC_3 Login user with incorrect credentials', async ({ page }) => {
 
   const homePage = new HomePage(page);
 
@@ -87,17 +111,6 @@ test('TC_2 Login', async ({ page }) => {
 
     await loginPage.expectLoginToYourAccount();
 
-      await loginPage.enterCredentials();
-
-        await loginPage.clickLoginButton();
-
-  await homePage.getLoggedInName();
-
-    await homePage.expectLoggedInName(process.env.NAME!);
-
-  await homePage.deleteAccountAndValidate();
-
-    await page.getByText(baseValue.continue).click();
+      await loginPage.enterIncorrectCredentials();
 
 });
-

@@ -52,7 +52,8 @@ export class HomePage {
 
   async goto(): Promise<void> {
     await this.page.goto(process.env.BASE_URL!);
-  }
+      await this.expectPageToBeVisible();
+}
 
   async expectPageToBeVisible(): Promise<void> {
     await expect(this.loginButton).toBeVisible();
