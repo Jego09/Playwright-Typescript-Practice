@@ -1,15 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { env } from '../utils/env';
-// import { HomePageLocators } from '../locators/Homepage-Locators';
 import { getTestDataFromCSV } from '../utils/csvReader';
 import { randomString } from '../utils/data';
-// import { LoginLocators, SignUpLocators } from '../locators/SignUp-Login-Locators';
-// import { SignUpLoginPage } from '../pages/SignUp-Login';
-import { HomePage } from '../pages/HomePage';
-import { LoginPage } from '../pages/LoginPage';
-import  SignupPage  from '../pages/SignupPage';
-import { AccountInformationPage } from '../pages/AccountInformationPage';
-import { SignUpLocators } from '../locators/SignUp-Login-Locators';
+import { HomePage } from '../pages/Homepage/HomePage';
+import { LoginPage } from '../pages/LoginPage/LoginPage';
+import  SignupPage  from '../pages/SignUpPage/SignupPage';
+import { AccountInformationPage } from '../pages/SignUpPage/AccountInformationPage';
+import { SignUpLocators } from '../pages/SignUpPage/SignUpLocators';
+import { baseValue } from '../utils/common';
 
 
 test('TC_1 Register User', async ({ page }) => {
@@ -23,13 +21,14 @@ test('TC_1 Register User', async ({ page }) => {
   await homePage.clickLoginButton();
 
   const loginPage = new LoginPage(page);
-  await expect(loginPage.newSignupButton).toBeVisible();
+  await loginPage.expectToBeVisible();
 
   const signupPage = new SignupPage(page);
   const filledValues: Record<string, string> = {};
 
+
   for (const [name, value] of Object.entries(credentials)) {
-    if (name === 'ID') continue;
+    if (name === baseValue.ID) continue;
 
     const filledValue = value + randomString(5);
     filledValues[name] = filledValue;
@@ -47,15 +46,20 @@ test('TC_1 Register User', async ({ page }) => {
   await accountInformationPage.fillForm(accountInfo);
   await accountInformationPage.submitForm();
 
-  await expect(page.getByText('Account Created!')).toBeVisible();
+  await accountInformationPage.AccountCreatedValidation();
 
   const continueButton = page.locator(SignUpLocators.ContinueButton);
   await continueButton.click();
 
-  const filledName = filledValues["name"];
-  const loggedInName = await page.locator('text=Logged in as').locator('b').textContent();
+  await accountInformationPage.getLoggedInName();
+  await accountInformationPage.expectLoggedInName(filledValues[baseValue.name]); 
 
-  expect(loggedInName?.trim()).toBe(filledName);
+  await homePage.clickDeleteAccount();
+
+  await homePage.accountDeletedValidation();
+  
+  await page.getByText(baseValue.continue).click();
+
 });
 
 // test('TC_2 Login', async ({ page }) => {

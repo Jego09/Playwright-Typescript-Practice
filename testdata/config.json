@@ -1,0 +1,10 @@
+{
+  "signup": {
+    "file": "testdata/signup.csv",
+    "row": 0
+  },
+  "accountInformation": {
+    "file": "testdata/AccountInformation.csv",
+    "row": 0
+  }
+}

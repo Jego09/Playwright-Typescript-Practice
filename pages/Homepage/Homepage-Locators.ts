@@ -8,6 +8,7 @@ export const HomePageLocators = {
     APITesting: '//a[contains(@href, "/api_list")]',
     VideoTutorials: '//a[contains(@href, "/video_tutorials")]',
     ContactUsButton: '//a[contains(@href, "/contact_us")]',
+    DeleteAccountButton: '//a[contains(@href, "/delete_account")]',
 
 };
 

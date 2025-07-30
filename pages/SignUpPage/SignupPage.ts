@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-
+import { Page, Locator, expect } from '@playwright/test';
+import { randomString } from '../../utils/data';
 export default class SignupPage {
   private page: Page;
 
@@ -12,7 +12,8 @@ export default class SignupPage {
   }
 
   async fillForm(fields: Record<string, string>): Promise<void> {
-    for (const [name, value] of Object.entries(fields)) {
+    for (const [name, value] of Object.entries(fields)) 
+      {
       await this.form.locator(`input[name="${name}"]`).fill(value);
     }
   }
