@@ -15,102 +15,78 @@ dotenv.config();
 test('TC_1 Register User', async ({ page }) => {
 
   const allCredentials = getTestDataFromCSV('testdata/signup.csv');
-
-    const credentials = allCredentials[0]; // get the first row
+  const credentials = allCredentials[0]; // get the first row
 
   const homePage = new HomePage(page);
-
-    await homePage.goto();
-
-      await homePage.clickLoginButton();
+  await homePage.goto();
+  await homePage.clickLoginButton();
 
   const loginPage = new LoginPage(page);
-
-    await loginPage.expectToBeVisible();
+  await loginPage.expectToBeVisible();
 
   const signupPage = new SignupPage(page);
+  const filledValues: Record<string, string> = {};
 
-    const filledValues: Record<string, string> = {};
+    for (const [name, value] of Object.entries(credentials)) {
 
-      for (const [name, value] of Object.entries(credentials)) {
+      if (name === baseValue.ID) continue;
 
-        if (name === baseValue.ID) continue;
+      const filledValue = value + randomString(5);
 
-        const filledValue = value + randomString(5);
-
-        filledValues[name] = filledValue;
-      }
+      filledValues[name] = filledValue;
+    }
 
   await signupPage.fillForm(filledValues);
-
-    await signupPage.submitForm();
+  await signupPage.submitForm();
 
   const accountInformationPage = new AccountInformationPage(page);
-
-    await accountInformationPage.expectToBeVisible();
+  await accountInformationPage.expectToBeVisible();
 
   const accountInformation = getTestDataFromCSV('testdata/AccountInformation.csv');
-
-    const accountInfo = accountInformation[0]; // get the first row
-
+  const accountInfo = accountInformation[0]; // get the first row
+  
   await accountInformationPage.fillForm(accountInfo);
-
-    await accountInformationPage.submitForm();
-
-      await accountInformationPage.AccountCreatedValidation();
+  await accountInformationPage.submitForm();
+  await accountInformationPage.AccountCreatedValidation();
 
   const continueButton = page.locator(SignUpLocators.ContinueButton);
-
-    await continueButton.click();
+  await continueButton.click();
 
   await homePage.getLoggedInName();
+  await homePage.expectLoggedInName(filledValues[baseValue.name]); 
 
-    await homePage.expectLoggedInName(filledValues[baseValue.name]); 
-
-  await homePage.deleteAccountAndValidate();
-  
-      await page.getByText(baseValue.continue).click();
+  // await homePage.deleteAccountAndValidate();
+  // await page.getByText(baseValue.continue).click();
 
 });
 
 test('TC_2 Login user with correct credentials', async ({ page }) => {
 
   const homePage = new HomePage(page);
-
-    await homePage.goto();
-
-        await homePage.clickLoginButton();
+  await homePage.goto();
+  await homePage.clickLoginButton();
 
   const loginPage = new LoginPage(page);
-
-    await loginPage.expectLoginToYourAccount();
-
-      await loginPage.enterCredentials();
+  await loginPage.expectLoginToYourAccount();
+  await loginPage.enterCredentials();
 
   await homePage.getLoggedInName();
-
-    await homePage.expectLoggedInName(process.env.NAME!);
+  await homePage.expectLoggedInName(process.env.NAME!);
 
   await homePage.deleteAccountAndValidate();
-
-    await page.getByText(baseValue.continue).click();
+  await page.getByText(baseValue.continue).click();
 
 });
 
 test('TC_3 Login user with incorrect credentials', async ({ page }) => {
 
   const homePage = new HomePage(page);
-
-    await homePage.goto();
-
-      await homePage.expectPageToBeVisible();
-
-        await homePage.clickLoginButton();
+  await homePage.goto();
+  await homePage.expectPageToBeVisible();
+  await homePage.clickLoginButton();
 
   const loginPage = new LoginPage(page);
-
-    await loginPage.expectLoginToYourAccount();
-
-      await loginPage.enterIncorrectCredentials();
+  await loginPage.expectLoginToYourAccount();
+  await loginPage.enterIncorrectCredentials();
 
 });
