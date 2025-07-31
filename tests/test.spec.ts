@@ -6,8 +6,10 @@ import { LoginPage } from '../pages/LoginPage/LoginPage';
 import  SignupPage  from '../pages/SignUpPage/SignupPage';
 import { AccountInformationPage } from '../pages/SignUpPage/AccountInformationPage';
 import { SignUpLocators } from '../pages/SignUpPage/SignUpLocators';
-import { baseValue } from '../utils/common';
+import { baseValue, commonData } from '../utils/common';
 import dotenv from 'dotenv';
+import { ContactUsPage } from '../pages/ContactUsPage/ContactUsPage';
+import { ContactLocators } from '../pages/ContactUsPage/Contact-Locators';
 
 dotenv.config();
 
@@ -37,6 +39,7 @@ test('TC_1 Register User', async ({ page }) => {
     }
 
   await signupPage.fillForm(filledValues);
+  console.log('Filled Values:', filledValues);
   await signupPage.submitForm();
 
   const accountInformationPage = new AccountInformationPage(page);
@@ -44,7 +47,7 @@ test('TC_1 Register User', async ({ page }) => {
 
   const accountInformation = getTestDataFromCSV('testdata/AccountInformation.csv');
   const accountInfo = accountInformation[0]; // get the first row
-  
+
   await accountInformationPage.fillForm(accountInfo);
   await accountInformationPage.submitForm();
   await accountInformationPage.AccountCreatedValidation();
@@ -69,6 +72,7 @@ test('TC_2 Login user with correct credentials', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.expectLoginToYourAccount();
   await loginPage.enterCredentials();
+  await loginPage.clickLoginButton();
 
   await homePage.getLoggedInName();
   await homePage.expectLoggedInName(process.env.NAME!);
@@ -82,11 +86,89 @@ test('TC_3 Login user with incorrect credentials', async ({ page }) => {
 
   const homePage = new HomePage(page);
   await homePage.goto();
-  await homePage.expectPageToBeVisible();
   await homePage.clickLoginButton();
 
   const loginPage = new LoginPage(page);
   await loginPage.expectLoginToYourAccount();
   await loginPage.enterIncorrectCredentials();
+
+});
+
+test('TC_4 Logout User', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickLoginButton();
+
+  const loginPage = new LoginPage(page);
+  await loginPage.expectLoginToYourAccount();
+  await loginPage.enterCredentials();
+  await loginPage.clickLoginButton();
+
+  await homePage.getLoggedInName();
+  await homePage.expectLoggedInName(process.env.NAME!);
+  await homePage.clickLogoutButton();
+
+  await loginPage.expectLoginToYourAccount();
+
+});
+
+test('TC_5 Register User with existing email', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickLoginButton();
+
+  const loginPage = new LoginPage(page);
+  await loginPage.expectToBeVisible();
+
+  const signupPage = new SignupPage(page);
+  await signupPage.fillForm({
+
+    [baseValue.name]: process.env.NAME!,
+    [baseValue.email]: process.env.EMAIL!,
+
+  });
+
+  console.log('Filled Values:', {
+    [baseValue.name]: process.env.NAME!,
+    [baseValue.email]: process.env.EMAIL!,
+  });
+  
+  await signupPage.submitForm();
+  await signupPage.emailDuplicateErrorMessage();  
+
+});
+
+
+test('TC_6 Contact Us Form', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickContactUsButton();
+
+  const contactUs = new ContactUsPage(page);
+
+  await contactUs.formToBeVisible();
+
+  await contactUs.fillContactForm({
+    name: commonData.name,
+    email: commonData.email,
+    subject: ContactLocators.subjectInput,
+    message: ContactLocators.messageInput,
+
+  });
+
+  await page.waitForTimeout(2000);
+
+  await contactUs.submitContactForm();
+  
+    await page.waitForTimeout(2000);
+
+  await contactUs.expectSuccessMessage();
+
+  await homePage.clickHomeButton();
+
+  await homePage.expectPageToBeVisible();
 
 });

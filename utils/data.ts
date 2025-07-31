@@ -1,3 +1,5 @@
+import { Page } from '@playwright/test';
+
 export function randomString(length: number): string {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -5,4 +7,13 @@ export function randomString(length: number): string {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
+};
+
+
+export function handlingAlertMessages(page: Page): void {
+  page.once('dialog', async (dialog) => {
+    console.log(dialog.message()); // Optional: Log the text
+    await dialog.accept(); // This clicks "OK"
+  });
 }
+

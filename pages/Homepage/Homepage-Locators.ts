@@ -1,6 +1,6 @@
 export const HomePageLocators = {
 
-    HomeButton: '//a[contains(@href="/")]',
+    HomeButton: '//i[contains(@class, "fa fa-home")]',
     ProductsButton: '//a[contains(@href, "/products")]',
     CartButton: '//a[contains(@href, "/view_cart")]',
     LoginButton: '//a[contains(@href, "/login")]',
@@ -9,6 +9,7 @@ export const HomePageLocators = {
     VideoTutorials: '//a[contains(@href, "/video_tutorials")]',
     ContactUsButton: '//a[contains(@href, "/contact_us")]',
     DeleteAccountButton: '//a[contains(@href, "/delete_account")]',
+    Logout: '//a[contains(@href, "/logout")]',
 
 };
 

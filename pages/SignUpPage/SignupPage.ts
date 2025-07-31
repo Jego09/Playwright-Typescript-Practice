@@ -12,8 +12,7 @@ export default class SignupPage {
   }
 
   async fillForm(fields: Record<string, string>): Promise<void> {
-    for (const [name, value] of Object.entries(fields)) 
-      {
+    for (const [name, value] of Object.entries(fields)) {
       await this.form.locator(`input[name="${name}"]`).fill(value);
     }
   }
@@ -21,4 +20,9 @@ export default class SignupPage {
   async submitForm(): Promise<void> {
     await this.form.locator('button[type="submit"]').click();
   }
+  async emailDuplicateErrorMessage(): Promise<Locator> {
+  const locator = this.page.getByText('Email Address already exist!');
+  await locator.waitFor(); 
+  return locator;
+  } 
 }

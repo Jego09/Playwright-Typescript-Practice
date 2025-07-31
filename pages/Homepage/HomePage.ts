@@ -3,36 +3,6 @@ import { baseValue, HomePageLocators } from './Homepage-Locators';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// export class HomePage {
-  // private page: Page;
-  // private readonly homePageLocators = HomePageLocators;
-
-  // constructor(page: Page) {
-  //   this.page = page;
-  // }
-
-  // get loginButton(): Locator {
-  //   return this.page.locator(HomePageLocators.LoginButton);
-  // }
-
-  // async goto(): Promise<void> {
-  //   await this.page.goto(process.env.BASE_URL!);
-  // }
-  // async expectPageToBeVisible(): Promise<void> {
-  //   await expect(this.page.locator(this.homePageLocators.LoginButton)).toBeVisible();
-  // }
-  // async clickLoginButton(): Promise<void> {
-  //   await this.loginButton.click();
-  // }
-  // async clickDeleteAccount(): Promise<void> {
-  //   await this.page.locator(HomePageLocators.DeleteAccountButton).click();
-  // }
-
-  // async accountDeletedValidation(): Promise<void> {
-  //   await expect(this.page.getByText('Account Deleted!')).toBeVisible();
-  // }
-// }
-
 export class HomePage {
 
   private page: Page;
@@ -56,7 +26,8 @@ export class HomePage {
 }
 
   async expectPageToBeVisible(): Promise<void> {
-    await expect(this.loginButton).toBeVisible();
+    await expect(this.page).toHaveURL(process.env.BASE_URL!);
+      await expect(this.page).toHaveTitle(/Automation Exercise/);
   }
 
   async clickLoginButton(): Promise<void> {
@@ -82,5 +53,16 @@ export class HomePage {
   async expectLoggedInName(expectedName: string): Promise<void> {
     const loggedInName = await this.getLoggedInName();
     expect(loggedInName).toBe(expectedName);
+  }
+
+  async clickLogoutButton(): Promise<void> {
+    await this.page.locator(this.homePageLocators.Logout).click();
+  }
+
+  async clickContactUsButton(): Promise<void> {
+    await this.page.locator(this.homePageLocators.ContactUsButton).click();
+  }
+  async clickHomeButton(): Promise<void> {
+    await this.page.locator(this.homePageLocators.HomeButton).click();
   }
 }

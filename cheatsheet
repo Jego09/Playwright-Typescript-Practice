@@ -66,3 +66,17 @@ export class RegistrationPage {
 //     await inputById.fill(value);
 //   }
 // }
+
+// Handling alert Message
+
+async submitContactForm(): Promise<string> {
+  let alertMessage = '';
+
+  this.page.once('dialog', async (dialog) => {
+    alertMessage = dialog.message();
+    await dialog.accept();
+  });
+
+  await this.page.locator('input[type="submit"]').click();
+  return alertMessage;
+}

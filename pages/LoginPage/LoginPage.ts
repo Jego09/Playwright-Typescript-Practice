@@ -29,10 +29,10 @@ export class LoginPage {
   async expectLoginToYourAccount(): Promise<void> {
     await expect(this.LoginToYourAccount).toBeVisible();
   }
+
   async enterCredentials(): Promise<void> {
     await this.page.locator(LoginLocators.EmailInput).fill(process.env.EMAIL!);
       await this.page.locator(LoginLocators.PasswordInput).fill(process.env.PASSWORD!);
-        await this.clickLoginButton();
   }
   async clickLoginButton(): Promise<void> {
     await this.page.locator(LoginLocators.LoginButton).click();

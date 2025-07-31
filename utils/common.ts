@@ -12,3 +12,9 @@ export const baseValue = {
     continue: 'continue',
     
 }
+
+export const commonData = {
+
+    name: 'John Doe',
+    email: 'Johndoe@gmail.com',
+}
