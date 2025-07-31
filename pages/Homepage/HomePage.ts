@@ -34,6 +34,10 @@ export class HomePage {
     await this.loginButton.click();
   }
 
+  async hoverOverLoginButton(): Promise<void> {
+    await this.loginButton.hover();
+  }
+
   async clickDeleteAccount(): Promise<void> {
     await this.deleteAccountButton.click();
   }
