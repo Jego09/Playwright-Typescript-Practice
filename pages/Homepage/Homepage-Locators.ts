@@ -4,12 +4,13 @@ export const HomePageLocators = {
     ProductsButton: '//a[contains(@href, "/products")]',
     CartButton: '//a[contains(@href, "/view_cart")]',
     LoginButton: '//a[contains(@href, "/login")]',
-    TestCases: '//a[contains(@href, "/test_cases")]',
-    APITesting: '//a[contains(@href, "/api_list")]',
-    VideoTutorials: '//a[contains(@href, "/video_tutorials")]',
+    TestCaseButton: '//a[text()=" Test Cases"]',
+    APITestingButton: '//a[contains(@href, "/api_list")]',
+    VideoTutorialsButton: '//a[contains(@href, "/video_tutorials")]',
     ContactUsButton: '//a[contains(@href, "/contact_us")]',
     DeleteAccountButton: '//a[contains(@href, "/delete_account")]',
     Logout: '//a[contains(@href, "/logout")]',
+    featuredProducts: '//div[@class="features_items"]',
 
 };
 

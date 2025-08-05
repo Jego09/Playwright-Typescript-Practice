@@ -10,6 +10,7 @@ import { baseValue, commonData } from '../utils/common';
 import dotenv from 'dotenv';
 import { ContactUsPage } from '../pages/ContactUsPage/ContactUsPage';
 import { ContactLocators } from '../pages/ContactUsPage/Contact-Locators';
+import { ProductPage } from '../pages/ProductsPage/ProductPage';
 
 dotenv.config();
 
@@ -17,9 +18,10 @@ test.describe('TC_1 Register User', () => {
 
   const allCredentials = getTestDataFromCSV('testdata/signup.csv');
 
-  allCredentials.forEach((credentials, index) => {
+  allCredentials.forEach((credentials) => {
     
     test(`Register User with ${credentials[baseValue.name]}`, async ({ page }) => {
+
       const homePage = new HomePage(page);
       await homePage.goto();
       await homePage.clickLoginButton();
@@ -61,56 +63,6 @@ test.describe('TC_1 Register User', () => {
   });
 });
 
-// test('TC_1 Register User', async ({ page }) => {
-
-//   const allCredentials = getTestDataFromCSV('testdata/signup.csv');
-//   const credentials = allCredentials[0]; // get the first row
-
-//   const homePage = new HomePage(page);
-//   await homePage.goto();
-//   await homePage.clickLoginButton();
-
-//   const loginPage = new LoginPage(page);
-//   await loginPage.expectToBeVisible();
-
-//   const signupPage = new SignupPage(page);
-//   const filledValues: Record<string, string> = {};
-
-//     for (const [name, value] of Object.entries(credentials)) {
-
-//       if (name === baseValue.ID) continue;
-
-//       const filledValue = value + randomString(5);
-
-//       filledValues[name] = filledValue;
-
-//     }
-
-//   await signupPage.fillForm(filledValues);
-//   console.log('Filled Values:', filledValues);
-//   await signupPage.submitForm();
-
-//   const accountInformationPage = new AccountInformationPage(page);
-//   await accountInformationPage.expectToBeVisible();
-
-//   const accountInformation = getTestDataFromCSV('testdata/AccountInformation.csv');
-//   const accountInfo = accountInformation[0]; // get the first row
-
-//   await accountInformationPage.fillForm(accountInfo);
-//   await accountInformationPage.submitForm();
-//   await accountInformationPage.AccountCreatedValidation();
-
-//   const continueButton = page.locator(SignUpLocators.ContinueButton);
-//   await continueButton.click();
-
-//   await homePage.getLoggedInName();
-//   await homePage.expectLoggedInName(filledValues[baseValue.name]); // baseValue.name is the name of the locator, value is based on the CSV file. (not the value)
-
-//   // await homePage.deleteAccountAndValidate();
-//   // await page.getByText(baseValue.continue).click();
-
-// });
-
 test('TC_2 Login user with correct credentials', async ({ page }) => {
 
   const homePage = new HomePage(page);
@@ -126,6 +78,7 @@ test('TC_2 Login user with correct credentials', async ({ page }) => {
   await homePage.expectLoggedInName(process.env.NAME!);
 
   await homePage.deleteAccountAndValidate();
+
   await page.getByText(baseValue.continue).click();
 
 });
@@ -171,6 +124,7 @@ test('TC_5 Register User with existing email', async ({ page }) => {
   await loginPage.expectToBeVisible();
 
   const signupPage = new SignupPage(page);
+  
   await signupPage.fillForm({
 
     [baseValue.name]: process.env.NAME!,
@@ -187,7 +141,6 @@ test('TC_5 Register User with existing email', async ({ page }) => {
   await signupPage.emailDuplicateErrorMessage();  
 
 });
-
 
 test('TC_6 Contact Us Form', async ({ page }) => {
 
@@ -211,12 +164,33 @@ test('TC_6 Contact Us Form', async ({ page }) => {
 
   await contactUs.submitContactForm();
   
-    await page.waitForTimeout(2000);
+  await page.waitForTimeout(2000);
 
   await contactUs.expectSuccessMessage();
 
   await homePage.clickHomeButton();
 
   await homePage.expectPageToBeVisible();
+
+});
+
+test('TC_7 Verify Test Case Page', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+
+  await homePage.goto();
+
+  await homePage.clickTestCaseButton();
+
+});
+
+test('TC_8 Verify All Products and product detail page', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto(); 
+  await homePage.clickProductsButton();
+
+  const productPage = new ProductPage(page);
+  await productPage.clickViewProductButton(1);
 
 });

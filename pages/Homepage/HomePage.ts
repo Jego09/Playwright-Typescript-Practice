@@ -6,18 +6,21 @@ dotenv.config();
 export class HomePage {
 
   private page: Page;
-  private readonly homePageLocators = HomePageLocators;
+  private readonly H = HomePageLocators;
 
   constructor(page: Page) {
     this.page = page;
   }
 
   get loginButton(): Locator {
-    return this.page.locator(this.homePageLocators.LoginButton);
+    return this.page.locator(this.H.LoginButton);
   }
 
   get deleteAccountButton(): Locator {
-    return this.page.locator(this.homePageLocators.DeleteAccountButton);
+    return this.page.locator(this.H.DeleteAccountButton);
+  }
+  get featuredProducts(): Locator {
+    return this.page.locator(this.H.featuredProducts);
   }
 
   async goto(): Promise<void> {
@@ -60,13 +63,22 @@ export class HomePage {
   }
 
   async clickLogoutButton(): Promise<void> {
-    await this.page.locator(this.homePageLocators.Logout).click();
+    await this.page.locator(this.H.Logout).click();
   }
 
   async clickContactUsButton(): Promise<void> {
-    await this.page.locator(this.homePageLocators.ContactUsButton).click();
+    await this.page.locator(this.H.ContactUsButton).click();
   }
   async clickHomeButton(): Promise<void> {
-    await this.page.locator(this.homePageLocators.HomeButton).click();
+    await this.page.locator(this.H.HomeButton).click();
+  }
+  async clickTestCaseButton(): Promise<void> {
+    await this.page.locator(this.H.TestCaseButton).click();
+      await expect(this.page.getByRole('heading', { name: 'Test Cases', exact: true })).toBeVisible();
+  }
+  async clickProductsButton(): Promise<void> {
+    await this.page.locator(this.H.ProductsButton).click();
+      await expect(this.page.locator(this.H.featuredProducts)).toBeVisible();
   }
 }
+  
