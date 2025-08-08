@@ -11,7 +11,10 @@ export const HomePageLocators = {
     DeleteAccountButton: '//a[contains(@href, "/delete_account")]',
     Logout: '//a[contains(@href, "/logout")]',
     featuredProducts: '//div[@class="features_items"]',
-
+    SubscriptionText: '//h2[contains(text(), "Subscription")]',
+    SubscriptionField: '//input[@id="susbscribe_email"]',
+    SubscriptionButton: '//button[@id="subscribe"]',
+    SubscriptionNotification: 'You have been successfully subscribed!'
 };
 
 export const baseValue = {

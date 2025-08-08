@@ -18,6 +18,14 @@ export class ProductPage {
         await button.click();
         await expect(this.page.locator(this.P.ProductInformation)).toBeVisible();
     }
+
+    async fillSearchField(field: string): Promise<void> {
+        const searchButton = this.page.locator(this.P.ProductSearchField);
+        await searchButton.click();
+        await expect(searchButton).toBeVisible();
+        await searchButton.fill(field);
+        await this.page.locator(this.P.SearchButton).click();
+    }
 }
 
 

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getTestDataFromCSV } from '../utils/csvReader';
+import { getTestDataFromCSV, getTestdataFromJsonfile } from '../utils/csvReader';
 import { randomString } from '../utils/data';
 import { HomePage } from '../pages/Homepage/HomePage';
 import { LoginPage } from '../pages/LoginPage/LoginPage';
@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import { ContactUsPage } from '../pages/ContactUsPage/ContactUsPage';
 import { ContactLocators } from '../pages/ContactUsPage/Contact-Locators';
 import { ProductPage } from '../pages/ProductsPage/ProductPage';
+import { ProductLocators } from '../pages/ProductsPage/ProductsLocators';
 
 dotenv.config();
 
@@ -192,5 +193,34 @@ test('TC_8 Verify All Products and product detail page', async ({ page }) => {
 
   const productPage = new ProductPage(page);
   await productPage.clickViewProductButton(1);
+
+});
+
+test('TC_9 Search Product', async ({ page }) => {
+
+  const items = getTestdataFromJsonfile('testdata/items.json');
+  const item = items.find((item: any) => item.id === 1); // or add type
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickProductsButton();
+
+  const productPage = new ProductPage(page);
+  await productPage.fillSearchField(item.name);
+  console.log('Searching for product:', item.name);
+  await page.waitForTimeout(2000);  
+  await expect(page.locator(ProductLocators.ProductName(item.name))).toBeVisible();
+
+});
+
+test('TC_10 Verify Subscription in home page', async ({ page }) => {
+
+  const emails = getTestdataFromJsonfile('testdata/TestEmails.json');
+  const email = emails.find((email: any) => email.id === 1); // or add type
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.validateSubscriptionText();
+  await homePage.fillSubscriptionField(email.email);
 
 });

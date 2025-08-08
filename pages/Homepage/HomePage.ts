@@ -80,5 +80,18 @@ export class HomePage {
     await this.page.locator(this.H.ProductsButton).click();
       await expect(this.page.locator(this.H.featuredProducts)).toBeVisible();
   }
+  async validateSubscriptionText(): Promise<void> {
+    await expect(this.page.locator(this.H.SubscriptionText)).toBeVisible();
+  }
+  async fillSubscriptionField(field: string): Promise<void> {
+
+    const subscriptionField = this.page.locator(this.H.SubscriptionField);
+    await subscriptionField.scrollIntoViewIfNeeded();
+    await subscriptionField.click();
+    await subscriptionField.fill(field);
+    await this.page.locator(this.H.SubscriptionButton).click();
+    await expect(this.page.getByText(this.H.SubscriptionNotification)).toBeVisible();
+  
+  }
 }
   
