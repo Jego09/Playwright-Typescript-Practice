@@ -249,5 +249,6 @@ test('TC_12 Add Products in Cart', async ({ page }) => {
   const cartPage = new CartPage(page);
   await cartPage.validateCartItems('Blue Top');
   await cartPage.validateCartItems('Men Tshirt');
+  
 });
 
