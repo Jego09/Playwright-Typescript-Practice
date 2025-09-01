@@ -13,7 +13,7 @@ export default class SignupPage {
 
   async fillForm(fields: Record<string, string>): Promise<void> {
     for (const [name, value] of Object.entries(fields)) {
-      await this.form.locator(`input[name="${name}"]`).fill(value);
+      await this.form.locator(`input[name="${name}"]`).fill(value); 
     }
   }
 

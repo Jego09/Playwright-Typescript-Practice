@@ -7,9 +7,11 @@ export class HomePage {
 
   private page: Page;
   private readonly H = HomePageLocators;
+  private NAVBAR: string;
 
   constructor(page: Page) {
     this.page = page;
+    this.NAVBAR = 'nav navbar-nav';
   }
 
   get loginButton(): Locator {
@@ -22,9 +24,13 @@ export class HomePage {
   get featuredProducts(): Locator {
     return this.page.locator(this.H.featuredProducts);
   }
+  get navBar(): Locator {
+    return this.page.locator(`//div[@class="shop-menu pull-right"]//ul[@class="${this.NAVBAR}"]`);
+  }
 
   async goto(): Promise<void> {
-    await this.page.goto(process.env.BASE_URL!);
+    await this.page.goto(process.env.BASE_URL!, { 
+      waitUntil: 'domcontentloaded' }); 
       await this.expectPageToBeVisible();
 }
 
@@ -91,7 +97,8 @@ export class HomePage {
     await subscriptionField.fill(field);
     await this.page.locator(this.H.SubscriptionButton).click();
     await expect(this.page.getByText(this.H.SubscriptionNotification)).toBeVisible();
-  
+  }
+  async clickCartButton(): Promise<void> {
+    await this.navBar.locator(this.H.CartButton).click();
   }
 }
-  

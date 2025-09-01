@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, defineConfig } from '@playwright/test';
 import { getTestDataFromCSV, getTestdataFromJsonfile } from '../utils/csvReader';
 import { randomString } from '../utils/data';
 import { HomePage } from '../pages/Homepage/HomePage';
@@ -11,17 +11,17 @@ import dotenv from 'dotenv';
 import { ContactUsPage } from '../pages/ContactUsPage/ContactUsPage';
 import { ContactLocators } from '../pages/ContactUsPage/Contact-Locators';
 import { ProductPage } from '../pages/ProductsPage/ProductPage';
-import { ProductLocators } from '../pages/ProductsPage/ProductsLocators';
+import { CartPage } from '../pages/ContactUsPage/CartPage/CartPage';
 
 dotenv.config();
 
-test.describe('TC_1 Register User', () => {
+test.describe('Register User', () => {
 
   const allCredentials = getTestDataFromCSV('testdata/signup.csv');
 
   allCredentials.forEach((credentials) => {
     
-    test(`Register User with ${credentials[baseValue.name]}`, async ({ page }) => {
+    test(`TC_1 Register User with ${credentials[baseValue.name]}`, async ({ page }) => {
 
       const homePage = new HomePage(page);
       await homePage.goto();
@@ -31,26 +31,19 @@ test.describe('TC_1 Register User', () => {
       await loginPage.expectToBeVisible();
 
       const signupPage = new SignupPage(page);
-      const filledValues: Record<string, string> = {};
+      await signupPage.fillForm({
 
-      for (const [name, value] of Object.entries(credentials)) {
-        if (name === baseValue.ID) continue;
+      [baseValue.name]: credentials[baseValue.name + randomString(3)],
+      [baseValue.email]: credentials[baseValue.email + randomString(3)],
 
-        const filledValue = value + randomString(5);
+      });
 
-        filledValues[name] = filledValue;
-      }
-
-      await signupPage.fillForm(filledValues);
-      console.log('Filled Values:', filledValues);
       await signupPage.submitForm();
 
       const accountInformationPage = new AccountInformationPage(page);
       await accountInformationPage.expectToBeVisible();
-
       const accountInformation = getTestDataFromCSV('testdata/AccountInformation.csv');
       const accountInfo = accountInformation[0]; // get the first row
-
       await accountInformationPage.fillForm(accountInfo);
       await accountInformationPage.submitForm();
       await accountInformationPage.AccountCreatedValidation();
@@ -59,10 +52,12 @@ test.describe('TC_1 Register User', () => {
       await continueButton.click();
 
       await homePage.getLoggedInName();
-      await homePage.expectLoggedInName(filledValues[baseValue.name]);
+      await homePage.expectLoggedInName(credentials[baseValue.name]);
     });
   });
 });
+
+test.describe('Login Tests', () => {
 
 test('TC_2 Login user with correct credentials', async ({ page }) => {
 
@@ -94,6 +89,8 @@ test('TC_3 Login user with incorrect credentials', async ({ page }) => {
   await loginPage.expectLoginToYourAccount();
   await loginPage.enterIncorrectCredentials();
 
+    
+  });
 });
 
 test('TC_4 Logout User', async ({ page }) => {
@@ -206,10 +203,10 @@ test('TC_9 Search Product', async ({ page }) => {
   await homePage.clickProductsButton();
 
   const productPage = new ProductPage(page);
-  await productPage.fillSearchField(item.name);
+  await productPage.fillSearchField(item.name); // Item name from JSON
   console.log('Searching for product:', item.name);
   await page.waitForTimeout(2000);  
-  await expect(page.locator(ProductLocators.ProductName(item.name))).toBeVisible();
+  await expect(page.locator(productPage.PRODUCT_NAME(item.name))).toBeVisible();
 
 });
 
@@ -224,3 +221,33 @@ test('TC_10 Verify Subscription in home page', async ({ page }) => {
   await homePage.fillSubscriptionField(email.email);
 
 });
+
+test('TC_11 Verify Subscription in Cart page', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickCartButton();
+  
+  const cartPage = new CartPage(page);
+  await expect(cartPage.subscriptionText).toBeVisible();
+  await cartPage.FillEmailField();
+});
+
+test('TC_12 Add Products in Cart', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickProductsButton();
+
+  const productPage = new ProductPage(page);
+  await productPage.product(0);
+  await page.getByText(productPage.CONTINUE_SHOPPING_BUTTON).click();
+  await productPage.product(1);
+
+  await productPage.clickViewCartButton();
+
+  const cartPage = new CartPage(page);
+  await cartPage.validateCartItems('Blue Top');
+  await cartPage.validateCartItems('Men Tshirt');
+});
+
