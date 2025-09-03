@@ -15,6 +15,7 @@ export class ProductPage {
     private ADD_TO_CART_BUTTON: (index: number) => string;
     public CONTINUE_SHOPPING_BUTTON: string;
     private OVERLAY_CONTENT: string; // For Add to Cart Modal
+    private QUANTITY: (index: number) => string;
 
     constructor(page: Page) {
         this.page = page;
@@ -28,7 +29,7 @@ export class ProductPage {
         this.ADD_TO_CART_BUTTON = (index: number) => `//a[@data-product-id=${index}]//a[@text="Add to cart"]`;
         this.CONTINUE_SHOPPING_BUTTON = "Continue Shopping";
         this.OVERLAY_CONTENT = '.overlay-content'; // For Add to Cart Modal
-
+        this.QUANTITY = (index: number) => 'quantity';
         
     }
 
@@ -46,15 +47,14 @@ export class ProductPage {
         return this.page.locator(this.PRODUCT_COUNT);
     }
 
-    async product(count: number): Promise<void> {
+    async AddToCartProduct(count: number): Promise<void> {
         const products = this.page.locator(this.PRODUCT_COUNT).nth(count);
         await products.hover();
         await products.locator('text=Add to cart').first().click();
 
     }
     async clickViewProductButton(index: number): Promise<void> {
-
-        const button = await this.page.locator(this.VIEW_PRODUCT_BUTTON(index));
+        const button = await this.featuredItems.locator(this.VIEW_PRODUCT_BUTTON(index));
         await button.click();
         await expect(this.page.locator(this.PRODUCT_INFORMATION)).toBeVisible();
     }
@@ -70,7 +70,3 @@ export class ProductPage {
         await this.modalContent.getByText('View Cart').click();
     }
 }
-
-
-
-
