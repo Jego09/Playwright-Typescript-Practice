@@ -5,13 +5,15 @@ import { HomePage } from '../pages/Homepage/HomePage';
 import { LoginPage } from '../pages/LoginPage/LoginPage';
 import  SignupPage  from '../pages/SignUpPage/SignupPage';
 import { AccountInformationPage } from '../pages/SignUpPage/AccountInformationPage';
-import { SignUpLocators } from '../pages/SignUpPage/SignUpLocators';
 import { baseValue, commonData } from '../utils/common';
 import dotenv from 'dotenv';
 import { ContactUsPage } from '../pages/ContactUsPage/ContactUsPage';
 import { ContactLocators } from '../pages/ContactUsPage/Contact-Locators';
 import { ProductPage } from '../pages/ProductsPage/ProductPage';
-import { CartPage } from '../pages/ContactUsPage/CartPage/CartPage';
+import { CartPage } from '../pages/CartPage/CartPage';
+import { ProductDetails } from '../pages/ProductsPage/ProductDetails';
+import { Sign, sign } from 'crypto';
+import { CheckoutPage } from '../pages/CheckoutPage/CheckoutPage';
 
 dotenv.config();
 
@@ -31,31 +33,27 @@ test.describe('Register User', () => {
       await loginPage.expectToBeVisible();
 
       const signupPage = new SignupPage(page);
-      await signupPage.fillForm({
-
-      [baseValue.name]: credentials[baseValue.name + randomString(3)],
-      [baseValue.email]: credentials[baseValue.email + randomString(3)],
-
-      });
-
+      await signupPage.fillFormWithRandomizedEmail(baseValue, credentials, randomString);
       await signupPage.submitForm();
 
       const accountInformationPage = new AccountInformationPage(page);
       await accountInformationPage.expectToBeVisible();
+
       const accountInformation = getTestDataFromCSV('testdata/AccountInformation.csv');
       const accountInfo = accountInformation[0]; // get the first row
+      
       await accountInformationPage.fillForm(accountInfo);
       await accountInformationPage.submitForm();
       await accountInformationPage.AccountCreatedValidation();
 
-      const continueButton = page.locator(SignUpLocators.ContinueButton);
-      await continueButton.click();
+      await signupPage.clickContinueButton();
 
       await homePage.getLoggedInName();
       await homePage.expectLoggedInName(credentials[baseValue.name]);
     });
   });
 });
+
 
 test.describe('Login Tests', () => {
 
@@ -230,7 +228,7 @@ test('TC_11 Verify Subscription in Cart page', async ({ page }) => {
   
   const cartPage = new CartPage(page);
   await expect(cartPage.subscriptionText).toBeVisible();
-  await cartPage.FillEmailField();
+  await cartPage.FillEmailField('BjPwI@example.com');
 });
 
 test('TC_12 Add Products in Cart', async ({ page }) => {
@@ -240,9 +238,9 @@ test('TC_12 Add Products in Cart', async ({ page }) => {
   await homePage.clickProductsButton();
 
   const productPage = new ProductPage(page);
-  await productPage.product(0);
+  await productPage.AddToCartProduct(0);
   await page.getByText(productPage.CONTINUE_SHOPPING_BUTTON).click();
-  await productPage.product(1);
+  await productPage.AddToCartProduct(1);
 
   await productPage.clickViewCartButton();
 
@@ -252,3 +250,95 @@ test('TC_12 Add Products in Cart', async ({ page }) => {
   
 });
 
+test('TC_13 Verify Product quantity in Cart', async ({ page }) => {
+
+  const quantity = 6;
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickProductsButton();
+
+  const productPage = new ProductPage(page);
+  await productPage.clickViewProductButton(1);
+
+  const productDetails = new ProductDetails(page);
+  await productDetails.changeQuantity(quantity);
+  await productDetails.addToCart(); // Click Add to Cart button
+  await page.waitForTimeout(1000); // Wait for modal to appear
+  await productPage.clickViewCartButton();
+
+  const cartPage = new CartPage(page);
+  await cartPage.validateCartQuantity(0, quantity);
+
+});
+
+test ('TC_14 Place Order: Register while Checkout', async ({ page }) => {
+
+  const allCredentials = getTestDataFromCSV('testdata/signup.csv');
+  const credentials = allCredentials[0]; // Use the first set of credentials
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickProductsButton();
+
+  const productPage = new ProductPage(page);
+  await productPage.clickViewProductButton(1);
+
+  const productDetails = new ProductDetails(page);
+  await productDetails.addToCart(); // Click Add to Cart button
+  await page.waitForTimeout(1000); // Wait for modal to appear
+  await productPage.clickViewCartButton();
+
+  const cartPage = new CartPage(page);
+  await cartPage.clickCheckoutButton();
+  await cartPage.clickRegisterLoginButton();
+
+  await page.waitForTimeout(2000); // Wait for navigation to complete
+
+  const signupPage = new SignupPage(page);
+  await signupPage.fillFormWithRandomizedEmail(baseValue, credentials, randomString);
+  await signupPage.submitForm();
+
+  const accountInformationPage = new AccountInformationPage(page);
+  await accountInformationPage.expectToBeVisible();
+
+  const accountInformation = getTestDataFromCSV('testdata/AccountInformation.csv');
+  const accountInfo = accountInformation[0];
+  await accountInformationPage.fillForm(accountInfo);
+  await accountInformationPage.submitForm();
+  await accountInformationPage.AccountCreatedValidation();
+  await page.waitForTimeout(1000); // Wait for navigation to complete
+  await signupPage.clickContinueButton();
+
+  await homePage.getLoggedInName();
+  await homePage.expectLoggedInName(credentials[baseValue.name]);
+  await homePage.clickCartButton();
+
+  await cartPage.clickCheckoutButton();
+
+  const checkoutPage = new CheckoutPage(page);
+  // const checkoutInformation = getTestDataFromCSV("testdata/AccountInformation.csv");
+  // const checkoutInfo = checkoutInformation[0]; // Use the first row for checkout
+
+  // // Validate values
+  // await checkoutPage.validateCheckoutInfo(checkoutInfo);
+  // // Enter comment and place order
+  await checkoutPage.enterComment("This is a test order.");
+  await checkoutPage.placeOrder();
+
+  //: Name on Card, Card Number, CVC, Expiration date
+  await checkoutPage.enterPaymentDetails({
+    name_on_card: "John Doe",
+    card_number: "4111111111111111",
+    cvc: "123",
+    expiration_month: "12",
+    expiration_year: "2025",
+  });
+
+  await checkoutPage.confirmOrder();
+  
+  await page.waitForTimeout(1000);
+
+  await homePage.deleteAccountAndValidate();
+
+});
