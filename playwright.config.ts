@@ -26,7 +26,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     trace: 'on-first-retry',
-    headless: false,
+    // headless: false,
     viewport: { width: 1920, height: 1080 }, // default viewport // start maximized
   },
 
