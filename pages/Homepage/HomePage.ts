@@ -8,10 +8,12 @@ export class HomePage {
   private page: Page;
   private readonly H = HomePageLocators;
   private NAVBAR: string;
+  private HOMEPAGE: string;
 
   constructor(page: Page) {
     this.page = page;
     this.NAVBAR = 'nav navbar-nav';
+    this.HOMEPAGE = 'https://automationexercise.com/';
   }
 
   get loginButton(): Locator {
@@ -29,13 +31,13 @@ export class HomePage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto(process.env.BASE_URL!, { 
+    await this.page.goto(this.HOMEPAGE!, { 
       waitUntil: 'domcontentloaded' }); 
       await this.expectPageToBeVisible();
 }
 
   async expectPageToBeVisible(): Promise<void> {
-    await expect(this.page).toHaveURL(process.env.BASE_URL!);
+    await expect(this.page).toHaveURL(this.HOMEPAGE);
       await expect(this.page).toHaveTitle(/Automation Exercise/);
   }
 
