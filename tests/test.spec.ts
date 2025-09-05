@@ -317,12 +317,12 @@ test ('TC_14 Place Order: Register while Checkout', async ({ page }) => {
   await cartPage.clickCheckoutButton();
 
   const checkoutPage = new CheckoutPage(page);
-  // const checkoutInformation = getTestDataFromCSV("testdata/AccountInformation.csv");
-  // const checkoutInfo = checkoutInformation[0]; // Use the first row for checkout
+  const checkoutInformation = getTestDataFromCSV("testdata/AccountInformation.csv");
+  const checkoutInfo = checkoutInformation[0]; // Use the first row for checkout
 
-  // // Validate values
-  // await checkoutPage.validateCheckoutInfo(checkoutInfo);
-  // // Enter comment and place order
+  // Validate values
+  await checkoutPage.validateCheckoutInfo(checkoutInfo);
+  // Enter comment and place order
   await checkoutPage.enterComment("This is a test order.");
   await checkoutPage.placeOrder();
 
