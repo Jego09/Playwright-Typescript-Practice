@@ -12,12 +12,19 @@ A sandbox to:
 ##  Repository Structure
 
 ├── pages/ # Page Object Model components
+
 ├── tests/ # Playwright test files
+
 ├── testdata/ # Test data (e.g Sign Up Data's)
+
 ├── utils/ # Shared helpers and utilities
+
 ├── playwright.config.ts # Playwright configuration
+
 ├── tsconfig.json # TypeScript configuration
+
 ├── package.json # Project dependencies and scripts
+
 └── .gitignore # Exclude files from source control
 
 
