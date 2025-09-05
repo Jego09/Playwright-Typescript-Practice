@@ -25,7 +25,7 @@ A sandbox to:
 
 ├── package.json # Project dependencies and scripts
 
-└── .gitignore # Exclude files from source control
+└── .gitignore # Exclude files from source control.
 
 
 ---
