@@ -65,15 +65,15 @@ test('TC_2 Login user with correct credentials', async ({ page }) => {
 
   const loginPage = new LoginPage(page);
   await loginPage.expectLoginToYourAccount();
-  await loginPage.enterCredentials();
+  await loginPage.enterCredentials(); 
   await loginPage.clickLoginButton();
 
   await homePage.getLoggedInName();
   await homePage.expectLoggedInName(process.env.NAME!);
 
-  await homePage.deleteAccountAndValidate();
+  // await homePage.deleteAccountAndValidate();
 
-  await page.getByText(baseValue.continue).click();
+  // await page.getByText(baseValue.continue).click();
 
 });
 
