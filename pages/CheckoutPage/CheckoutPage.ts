@@ -64,10 +64,7 @@ export class CheckoutPage {
         if (title && !title.endsWith(".")) {
           title = `${title}.`;
         }
-
         expectedValue = `${title} ${first} ${last}`.trim();
-
-
         }
 
         const locator = await this.page.locator(selector);
