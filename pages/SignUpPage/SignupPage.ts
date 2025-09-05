@@ -52,6 +52,11 @@ async fillForm(fields: Record<string, unknown>): Promise<void> {
   const name = credentials[baseValue.name];
   const email = this.randomizeEmail(credentials[baseValue.email], randomString);
 
+  console.log('Filled Values:', {
+    [baseValue.name]: name,
+    [baseValue.email]: email,
+  });
+
   await this.fillForm({
     [baseValue.name]: name,
     [baseValue.email]: email,
