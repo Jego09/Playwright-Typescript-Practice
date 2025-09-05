@@ -23,16 +23,12 @@ export class CheckoutPage {
         this.COMMENT_BOX = 'textarea[name="message"]';
         this.PLACE_ORDER_BUTTON = '//*[@href="/payment"]';
         this.fieldSelectors = {
-            first_name: ".address_firstname address_lastname",
-            last_name: "last_name",
-            company: "company",
-            address1: "address1",
-            address2: "address2",
-            country: ".address_country_name",
-            state: "state",
-            city: "city",
-            zipcode: "zipcode",
-            mobile_number: ".address_phone",
+            first_name: 'xpath=//*[@id="address_delivery"]/li[2]',
+            company: 'xpath=//*[@id="address_delivery"]/li[3]',
+            address1: 'xpath=//*[@id="address_delivery"]/li[4]',
+            address2: 'xpath=//*[@id="address_delivery"]/li[5]',
+            country: 'xpath=//*[@id="address_delivery"]/li[7]',
+            mobile_number: 'xpath=//*[@id="address_delivery"]/li[8]',
         }
         this.NAME_ON_CARD = this.page.locator('input[name="name_on_card"]');
         this.CARD_NUMBER = this.page.locator('input[name="card_number"]');
@@ -46,26 +42,46 @@ export class CheckoutPage {
     get AddressDetails(): Locator {
       return this.page.locator(this.ADDRESS_DETAILS);
     }
- async validateCheckoutInfo(expectedData: Record<string, string>): Promise<void> {
-    for (const [field, selector] of Object.entries(this.fieldSelectors)) {
-      const expectedValue = expectedData[field];
-      if (!expectedValue) {
-        console.warn(`⚠️ Skipping ${field}, no value found in CSV`);
-        continue;
-      }
-
-      const locator = this.page.locator(selector);
-
-      // Get value or text
-      const actualValue = await locator.inputValue().catch(async () => {
-        return locator.innerText(); // fallback if not input
-      });
-
-      console.log(`Field: ${field}, Expected: ${expectedValue}, Actual: ${actualValue}`);
-
-      await expect(actualValue.trim()).toBe(expectedValue.trim());
+    get DeliveryAddressBox(): Locator {
+      return this.page.locator('.address_delivery');
     }
-  }
+  async validateCheckoutInfo(expectedData: Record<string, string>): Promise<void> {
+      for (const [field, selector] of Object.entries(this.fieldSelectors)) {
+        let expectedValue = expectedData[field];
+
+        
+        if (!expectedValue) {
+          console.warn(`⚠️ Skipping ${field}, no value found in CSV`);
+          continue;
+      
+        }
+        if (field === "first_name") {
+          let title = expectedData["title"] ?? "";
+          const first = expectedData["first_name"] ?? "";
+          const last = expectedData["last_name"] ?? "";
+          
+      // Ensure title ends with a "."
+        if (title && !title.endsWith(".")) {
+          title = `${title}.`;
+        }
+
+        expectedValue = `${title} ${first} ${last}`.trim();
+
+
+        }
+
+        const locator = await this.page.locator(selector);
+
+        // Get value or text
+        const actualValue = await locator.inputValue().catch(async () => {
+          return locator.innerText(); // fallback if not input
+        });
+
+        console.log(`Field: ${field}, Expected: ${expectedValue}, Actual: ${actualValue}`);
+
+        await expect(actualValue.trim()).toBe(expectedValue.trim());
+      }
+    }
     async enterComment(comment: string): Promise<void> {
       await this.page.locator(this.COMMENT_BOX).fill(comment);
     }
@@ -79,6 +95,7 @@ export class CheckoutPage {
         cvc: string;
         expiration_month: string;
         expiration_year: string;    
+
     }): Promise<void> {
         await this.NAME_ON_CARD.fill(details.name_on_card);
         await this.CARD_NUMBER.fill(details.card_number);
