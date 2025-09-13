@@ -346,7 +346,6 @@ test ('TC_14 Place Order: Register while Checkout', async ({ page }) => {
 
 test('TC_15 Place Order: Register before Checkout', async ({ page }) => {
 
-<<<<<<< HEAD
     const homePage = new HomePage(page);
     await homePage.goto();
     await homePage.clickLoginButton();
@@ -405,7 +404,4 @@ test('TC_15 Place Order: Register before Checkout', async ({ page }) => {
     await page.waitForTimeout(1000);
 
     await homePage.deleteAccountAndValidate();
-=======
->>>>>>> 149a206eef4b2649f312bb8eb4a1c679c73b3fa5
-
 });
