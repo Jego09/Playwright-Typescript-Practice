@@ -17,6 +17,7 @@ import { CheckoutPage } from '../pages/CheckoutPage/CheckoutPage';
 
 dotenv.config();
 
+
 test.describe('Register User', () => {
 
   const allCredentials = getTestDataFromCSV('testdata/signup.csv');
@@ -340,5 +341,10 @@ test ('TC_14 Place Order: Register while Checkout', async ({ page }) => {
   await page.waitForTimeout(1000);
 
   await homePage.deleteAccountAndValidate();
+
+});
+
+test('TC_15 Place Order: Register before Checkout', async ({ page }) => {
+
 
 });
