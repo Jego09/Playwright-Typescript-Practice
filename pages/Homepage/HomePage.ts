@@ -60,6 +60,7 @@ export class HomePage {
   async deleteAccountAndValidate(): Promise<void> {
     await this.clickDeleteAccount();
     await this.accountDeletedValidation();
+    console.log('Account Deleted Successfully');
   }
   async getLoggedInName(): Promise<string | null> {
     const loggedInName = await this.page.locator('text=Logged in as').locator('b').textContent();
