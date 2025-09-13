@@ -26,12 +26,12 @@ async fillForm(fields: Record<string, unknown>): Promise<void> {
   for (const [name, rawValue] of Object.entries(fields)) {
     if (name === baseValue.ID) continue;
     if (rawValue !== undefined && rawValue !== null) {
-      const value = String(rawValue); // ✅ ensure string
+      const value = String(rawValue); // ensure string
       const locator = this.form.locator(`input[name="${name}"]`);
       await locator.fill(value);
-      console.log(`✅ Filled input[name="${name}"] with: ${value}`);
+      console.log(`Filled input[name="${name}"] with: ${value}`);
     } else {
-      console.error(`❌ Value for field ${name} is undefined`);
+      console.error(`Value for field ${name} is undefined`);
     }
     
   }
