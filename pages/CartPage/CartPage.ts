@@ -6,7 +6,7 @@ export class CartPage {
   private EMAIL_FIELD: string;
   private BUTTON: string;
   private SUCCESS_MESSAGE: string;
-  private PRODUCT: (items: string) => Locator;
+  public PRODUCT: (items: string) => Locator;
   private CART_QUANTITY: string;
   private CHECKOUT_BUTTON: string;
   private modalContent: Locator;
@@ -60,5 +60,15 @@ export class CartPage {
   async clickRegisterLoginButton(): Promise<void> {
     await this.page.getByRole('link', { name: 'Register / Login' }).click();
     console.log('Clicked on Register/Login button');
+  }
+  async removeItemFromCart(itemName: string): Promise<void> {
+    const itemRow = this.page.locator(`//tr[.//a[contains(text(), '${itemName}')]]`);
+    const removeButton = itemRow.locator(`//td/a[@class='cart_quantity_delete']`);
+
+    await removeButton.click();
+    console.log(`Clicked on Remove button for item: ${itemName}`);
+
+    await expect(this.page.locator(`//tr[.//a[contains(text(), '${itemName}')]]`)).toHaveCount(0);
+    console.log(`Item: ${itemName} has been removed from the cart`);
   }
 }
