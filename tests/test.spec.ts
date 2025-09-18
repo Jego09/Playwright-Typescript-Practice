@@ -405,3 +405,71 @@ test('TC_15 Place Order: Register before Checkout', async ({ page }) => {
 
     await homePage.deleteAccountAndValidate();
 });
+
+test('TC_16 Place Order: Login before Checkout', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickLoginButton();
+
+  const loginPage = new LoginPage(page);
+  await loginPage.expectLoginToYourAccount();
+  await loginPage.enterCredentials();
+  await loginPage.clickLoginButton();
+
+  await homePage.getLoggedInName();
+  await homePage.expectLoggedInName(process.env.NAME!);
+
+  const productPage = new ProductPage(page);
+  await productPage.clickViewProductButton(1);
+  const productDetails = new ProductDetails(page);
+  await productDetails.addToCart();
+
+  await page.waitForTimeout(1000); // Wait for modal to appear
+  await productPage.clickViewCartButton();
+
+  const cartPage = new CartPage(page);
+  await cartPage.clickCheckoutButton();
+
+  const checkoutPage = new CheckoutPage(page);
+  const checkoutInformation = getTestDataFromCSV("testdata/AccountInformation.csv");
+  const checkoutInfo = checkoutInformation[0]; // Use the first row for checkout
+
+  // Validate values
+  await checkoutPage.validateCheckoutInfo(checkoutInfo);
+  // Enter comment and place order
+  await checkoutPage.enterComment("This is a test order.");
+  await checkoutPage.placeOrder();
+
+  //: Name on Card, Card Number, CVC, Expiration date
+  await checkoutPage.enterPaymentDetails({
+    name_on_card: "John Doe",
+    card_number: "4111111111111111",
+    cvc: "123",
+    expiration_month: "12",
+    expiration_year: "2025",
+  });
+  await checkoutPage.confirmOrder();
+  
+  await page.waitForTimeout(1000);
+
+  await homePage.deleteAccountAndValidate();
+
+});
+
+test('TC_17 Remove Products From Cart', async ({ page }) => {
+
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  await homePage.clickProductsButton();
+
+  const productPage = new ProductPage(page);
+  await productPage.AddToCartProduct(0);
+  await productPage.clickViewCartButton();
+
+  const cartPage = new CartPage(page);
+  await cartPage.validateCartItems('Blue Top');
+  await cartPage.removeItemFromCart('Blue Top');
+  await page.waitForTimeout(1000);
+
+});
