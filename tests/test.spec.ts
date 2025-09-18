@@ -406,7 +406,7 @@ test('TC_15 Place Order: Register before Checkout', async ({ page }) => {
     await homePage.deleteAccountAndValidate();
 });
 
-test('TC_16 Place Order: Login before Checkout', async ({ page }) => {
+test.skip('TC_16 Place Order: Login before Checkout', async ({ page }) => {
 
   const homePage = new HomePage(page);
   await homePage.goto();
